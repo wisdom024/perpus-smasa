@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Library SMAN 1 Magetan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f8fafc;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #1e40af;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 glass border-r hidden md:flex flex-col fixed h-full z-50">
+            <div class="p-8">
+                <div class="flex items-center gap-3 mb-10">
+                    <div class="w-12 h-12 flex items-center justify-center">
+                        <img src="https://smasa-magetan.sch.id/wp-content/uploads/2023/06/LOGO-SMA-NEGERI-1-MAGETAN-258x300.png" alt="Logo Smasa" class="object-contain h-full">
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-bold text-lg leading-tight tracking-tight">SMASA <span class="text-blue-600">LIB</span></span>
+                        <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">E-Library</span>
+                    </div>
+                </div>
+                
+                <nav class="space-y-2">
+                    <button onclick="switchTab('dashboard')" class="sidebar-item w-full flex items-center gap-4 p-3 rounded-xl transition-all font-medium text-slate-600">
+                        <i class="fas fa-th-large w-5 text-center"></i> Dashboard
+                    </button>
+                    <button onclick="switchTab('peminjaman')" class="sidebar-item w-full flex items-center gap-4 p-3 rounded-xl transition-all font-medium text-slate-600">
+                        <i class="fas fa-exchange-alt w-5 text-center"></i> Peminjaman
+                    </button>
+                    <button onclick="switchTab('pengembalian')" class="sidebar-item w-full flex items-center gap-4 p-3 rounded-xl transition-all font-medium text-slate-600">
+                        <i class="fas fa-undo w-5 text-center"></i> Pengembalian
+                    </button>
+                    <button onclick="switchTab('katalog')" class="sidebar-item w-full flex items-center gap-4 p-3 rounded-xl transition-all font-medium text-slate-600">
+                        <i class="fas fa-list w-5 text-center"></i> Katalog Buku
+                    </button>
+                </nav>
+            </div>
+            
+            <div class="mt-auto p-8">
+                <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100">
+                    <p class="text-[10px] text-blue-600 font-bold mb-1 tracking-wider uppercase">Pengembang Sistem</p>
+                    <p class="text-[10px] text-blue-400 leading-relaxed font-semibold uppercase">DIKEMBANGKAN OLEH KRISNA LAMBANGS XII.8, NO 18</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 md:ml-64 p-4 md:p-10">
+            <!-- Header -->
+            <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+                <div class="flex items-center gap-4">
+                    <img src="https://smasa-magetan.sch.id/wp-content/uploads/2023/06/LOGO-SMA-NEGERI-1-MAGETAN-258x300.png" alt="Logo Smasa" class="h-14 w-auto md:hidden">
+                    <div>
+                        <h1 id="pageTitle" class="text-3xl font-bold gradient-text">Dashboard Perpustakaan</h1>
+                        <p class="text-slate-500 text-sm">Sistem Informasi Perpustakaan Digital SMAN 1 Magetan.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white p-2 pr-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-sm leading-none">Administrator</p>
+                        <p class="text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">Petugas Perpustakaan</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Areas -->
+            <div id="content">
+                <!-- Dashboard Tab -->
+                <div id="dashboard-tab" class="tab-content space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="glass p-6 rounded-3xl card-hover border-l-4 border-l-blue-500">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Total Koleksi</p>
+                                    <h3 class="text-3xl font-bold" id="count-total">0</h3>
+                                </div>
+                                <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass p-6 rounded-3xl card-hover border-l-4 border-l-green-500">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Tersedia</p>
+                                    <h3 class="text-3xl font-bold text-green-600" id="count-available">0</h3>
+                                </div>
+                                <div class="p-3 bg-green-50 text-green-600 rounded-xl">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass p-6 rounded-3xl card-hover border-l-4 border-l-red-500">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Dipinjam</p>
+                                    <h3 class="text-3xl font-bold text-red-600" id="count-borrowed">0</h3>
+                                </div>
+                                <div class="p-3 bg-red-50 text-red-600 rounded-xl">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass p-8 rounded-3xl">
+                        <div class="flex justify-between items-center mb-8">
+                            <h4 class="font-bold text-lg">Koleksi Buku Unggulan</h4>
+                            <button onclick="switchTab('katalog')" class="text-blue-600 text-sm font-semibold hover:underline">Lihat Semua</button>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6" id="latest-books-grid">
+                           <!-- Buku akan dimuat di sini secara otomatis -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Peminjaman Tab -->
+                <div id="peminjaman-tab" class="tab-content hidden space-y-6">
+                    <div class="max-w-2xl mx-auto glass p-8 rounded-3xl shadow-xl border border-white">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-pen-nib text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">Formulir Peminjaman</h3>
+                                <p class="text-xs text-slate-400">Pastikan data siswa dan buku sudah sesuai.</p>
+                            </div>
+                        </div>
+                        <form id="loanForm" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Nama Lengkap Siswa</label>
+                                    <input type="text" id="studentName" placeholder="Contoh: Budi Santoso" required class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Kelas</label>
+                                    <select id="studentClass" required class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+                                        <option value="X">Kelas X</option>
+                                        <option value="XI">Kelas XI</option>
+                                        <option value="XII">Kelas XII</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Pilih Judul Buku</label>
+                                <select id="bookSelect" required class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+                                    <option value="">Sedang memuat daftar buku...</option>
+                                </select>
+                            </div>
+                            <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white font-bold py-5 rounded-2xl hover:bg-blue-700 shadow-xl shadow-blue-200 transition-all flex justify-center items-center gap-3">
+                                <i class="fas fa-check-circle"></i> Proses Peminjaman Buku
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Pengembalian Tab -->
+                <div id="pengembalian-tab" class="tab-content hidden space-y-6">
+                    <div class="max-w-2xl mx-auto glass p-8 rounded-3xl shadow-xl border border-white">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-undo text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">Formulir Pengembalian</h3>
+                                <p class="text-xs text-slate-400">Pilih buku yang dikembalikan untuk memperbarui stok.</p>
+                            </div>
+                        </div>
+                        <form id="returnForm" class="space-y-6">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Cari & Pilih Buku yang Dikembalikan</label>
+                                <select id="returnBookSelect" required class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none">
+                                    <option value="">-- Pilih Buku yang Berstatus Dipinjam --</option>
+                                </select>
+                            </div>
+                            <button type="submit" id="returnSubmitBtn" class="w-full bg-orange-600 text-white font-bold py-5 rounded-2xl hover:bg-orange-700 shadow-xl shadow-orange-200 transition-all flex justify-center items-center gap-3">
+                                <i class="fas fa-history"></i> Proses Pengembalian Buku
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Katalog Tab -->
+                <div id="katalog-tab" class="tab-content hidden space-y-4">
+                    <div class="flex flex-col md:flex-row gap-4 mb-4">
+                        <div class="flex-1 glass p-2 rounded-2xl flex items-center px-4">
+                            <i class="fas fa-search text-slate-300"></i>
+                            <input type="text" id="searchBook" onkeyup="filterBooks()" placeholder="Cari judul buku, kategori, atau pengarang..." class="w-full p-3 bg-transparent outline-none text-sm">
+                        </div>
+                    </div>
+                    <div class="glass rounded-3xl overflow-hidden shadow-sm border border-slate-100">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50/50">
+                                        <th class="p-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Judul Koleksi</th>
+                                        <th class="p-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pengarang / Kategori</th>
+                                        <th class="p-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookTableBody">
+                                    <!-- Data akan dimuat otomatis -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-10 right-10 transform translate-y-20 opacity-0 transition-all duration-300 z-[100]">
+        <div class="glass bg-slate-900/90 text-white px-8 py-5 rounded-3xl shadow-2xl flex items-center gap-4">
+            <div id="toastIcon" class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+                <i class="fas fa-check text-xs"></i>
+            </div>
+            <span id="toastMsg" class="font-semibold">Berhasil!</span>
+        </div>
+    </div>
+
+    <script>
+        // --- KONFIGURASI API ---
+        const API_URL = "GANTI_DENGAN_URL_WEB_APP_ANDA"; 
+
+        // Data Koleksi Lengkap
+        const initialBooks = [
+            // 1. Referensi & Kamus
+            ["1", "Kamus Besar Bahasa Indonesia", "Balai Pustaka", "Tersedia"],
+            ["2", "Kamus Inggris–Indonesia", "John M. Echols", "Tersedia"],
+            ["3", "Kamus Indonesia–Inggris", "John M. Echols", "Tersedia"],
+            ["4", "Ensiklopedia Anak", "PT. Ichtiar Baru", "Tersedia"],
+            ["5", "Ensiklopedia Sains", "DK Eyewitness", "Tersedia"],
+            ["6", "Ensiklopedia Sejarah Dunia", "Usborne", "Tersedia"],
+            ["7", "Atlas Dunia", "Periplus", "Tersedia"],
+            ["8", "Atlas Indonesia", "Pustaka Baru", "Tersedia"],
+            ["9", "Buku Tata Bahasa Indonesia", "Guntur Tarigan", "Tersedia"],
+            ["10", "Buku Rumus Lengkap Matematika", "Tim Maestro", "Tersedia"],
+            // 2. Fiksi
+            ["11", "Laskar Pelangi", "Andrea Hirata", "Tersedia"],
+            ["12", "Sang Pemimpi", "Andrea Hirata", "Tersedia"],
+            ["13", "Bumi", "Tere Liye", "Tersedia"],
+            ["14", "Bulan", "Tere Liye", "Tersedia"],
+            ["15", "Hujan", "Tere Liye", "Tersedia"],
+            ["16", "Negeri 5 Menara", "Ahmad Fuadi", "Tersedia"],
+            ["17", "Ranah 3 Warna", "Ahmad Fuadi", "Tersedia"],
+            ["18", "Ayat-Ayat Cinta", "H. El Shirazy", "Tersedia"],
+            ["19", "Dilan 1990", "Pidi Baiq", "Tersedia"],
+            ["20", "Perahu Kertas", "Dee Lestari", "Tersedia"],
+            ["21", "Harry Potter (Seri Lengkap)", "J.K. Rowling", "Tersedia"],
+            ["22", "The Hobbit", "J.R.R. Tolkien", "Tersedia"],
+            ["23", "Lord of the Rings", "J.R.R. Tolkien", "Tersedia"],
+            ["24", "Sherlock Holmes", "Arthur Conan Doyle", "Tersedia"],
+            ["25", "Malin Kundang", "Cerita Rakyat", "Tersedia"],
+            ["26", "Timun Mas", "Cerita Rakyat", "Tersedia"],
+            ["27", "Sangkuriang", "Cerita Rakyat", "Tersedia"],
+            // 3. Nonfiksi & Umum
+            ["28", "Sejarah Indonesia Lengkap", "Kemdikbud", "Tersedia"],
+            ["29", "Tokoh Pahlawan Nasional", "Aditya Media", "Tersedia"],
+            ["30", "Ilmu Pengetahuan Alam Populer", "Sains Media", "Tersedia"],
+            ["31", "Mengenal Tata Surya", "Planetarium", "Tersedia"],
+            ["32", "Teknologi Informasi Dasar", "Informatika", "Tersedia"],
+            ["33", "Pendidikan Karakter", "Gramedia", "Tersedia"],
+            ["34", "Etika Pelajar", "Pustaka Jaya", "Tersedia"],
+            ["35", "Pendidikan Anti Korupsi", "KPK RI", "Tersedia"],
+            // 4. Pengembangan Diri
+            ["36", "Motivasi Belajar", "Psikologi Edukasi", "Tersedia"],
+            ["37", "Cara Belajar Efektif", "Tim Akademik", "Tersedia"],
+            ["38", "Manajemen Waktu Pelajar", "Self Improvement", "Tersedia"],
+            ["39", "Membangun Percaya Diri", "Motivasi", "Tersedia"],
+            ["40", "Public Speaking Pemula", "Komunikasi", "Tersedia"],
+            ["41", "Kepemimpinan Remaja", "LDKS", "Tersedia"],
+            ["42", "Kecerdasan Emosional", "Daniel Goleman", "Tersedia"],
+            ["43", "Berpikir Kritis", "Filsafat Muda", "Tersedia"],
+            ["44", "Meraih Prestasi Akademik", "Inspirasi", "Tersedia"],
+            ["45", "Sukses Sejak Sekolah", "Wirausaha Muda", "Tersedia"],
+            // 5. Keterampilan & Kreativitas
+            ["46", "Panduan Microsoft Word", "Keterampilan Teknologi", "Tersedia"],
+            ["47", "Panduan Microsoft Excel", "Keterampilan Teknologi", "Tersedia"],
+            ["48", "Dasar Pemrograman", "Keterampilan Teknologi", "Tersedia"],
+            ["49", "Desain Grafis Dasar", "Kreativitas", "Tersedia"],
+            ["50", "Editing Video untuk Pemula", "Kreativitas", "Tersedia"],
+            ["51", "Fotografi Dasar", "Kreativitas", "Tersedia"],
+            ["52", "Menggambar & Melukis", "Kesenian", "Tersedia"],
+            ["53", "Kerajinan Tangan", "Kesenian", "Tersedia"],
+            ["54", "Memasak untuk Pemula", "Keterampilan Hidup", "Tersedia"],
+            ["55", "Kewirausahaan Siswa", "Ekonomi", "Tersedia"],
+            // 6. Buku Anak & Bacaan Ringan
+            ["56", "Dongeng Anak Nusantara", "Bacaan Ringan", "Tersedia"],
+            ["57", "Cerita Binatang", "Bacaan Ringan", "Tersedia"],
+            ["58", "Komik Edukasi", "Bacaan Ringan", "Tersedia"],
+            ["59", "Buku Mewarnai", "Aktivitas Anak", "Tersedia"],
+            ["60", "Cerita Bergambar", "Bacaan Ringan", "Tersedia"],
+            ["61", "Kisah Nabi dan Rasul", "Religi", "Tersedia"],
+            ["62", "Buku Moral & Akhlak", "Pendidikan", "Tersedia"],
+            ["63", "Seri Aku Bisa", "Pengembangan Anak", "Tersedia"],
+            ["64", "Seri Pengetahuan Anak", "Sains Anak", "Tersedia"],
+            ["65", "Buku Literasi Awal", "Pendidikan", "Tersedia"]
+        ];
+
+        let booksData = initialBooks;
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tab + '-tab').classList.remove('hidden');
+            const titles = {
+                'dashboard': 'Dashboard Perpustakaan',
+                'peminjaman': 'Peminjaman Buku',
+                'pengembalian': 'Pengembalian Buku',
+                'katalog': 'Katalog Koleksi'
+            };
+            document.getElementById('pageTitle').innerText = titles[tab];
+        }
+
+        async function loadBooks() {
+            try {
+                if (API_URL !== "GANTI_DENGAN_URL_WEB_APP_ANDA") {
+                    const response = await fetch(API_URL);
+                    const cloudData = await response.json();
+                    if(cloudData && cloudData.length > 0) booksData = cloudData;
+                }
+                renderBooks();
+                renderLatestBooks();
+                updateStats();
+                populateReturnSelect();
+            } catch (error) {
+                renderBooks();
+                renderLatestBooks();
+                updateStats();
+                populateReturnSelect();
+            }
+        }
+
+        function renderBooks() {
+            const tableBody = document.getElementById('bookTableBody');
+            const select = document.getElementById('bookSelect');
+            tableBody.innerHTML = '';
+            select.innerHTML = '<option value="">-- Pilih Judul Buku --</option>';
+
+            booksData.forEach(book => {
+                const [id, title, author, status] = book;
+                const row = `
+                    <tr class="border-t border-slate-50 hover:bg-blue-50/20 transition-colors">
+                        <td class="p-5 font-bold text-sm text-slate-700">${title}</td>
+                        <td class="p-5 text-slate-400 text-xs font-medium">${author}</td>
+                        <td class="p-5 text-center">
+                            <span class="px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider ${status === 'Tersedia' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">
+                                ${status}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('beforeend', row);
+                if (status === 'Tersedia') {
+                    const option = document.createElement('option');
+                    option.value = title;
+                    option.text = title;
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        // Fungsi untuk mengisi daftar buku yang bisa dikembalikan (status: Dipinjam)
+        function populateReturnSelect() {
+            const returnSelect = document.getElementById('returnBookSelect');
+            returnSelect.innerHTML = '<option value="">-- Pilih Buku yang Berstatus Dipinjam --</option>';
+            
+            const borrowedBooks = booksData.filter(b => b[3] === 'Dipinjam');
+            
+            if (borrowedBooks.length === 0) {
+                returnSelect.innerHTML = '<option value="">Tidak ada buku yang sedang dipinjam</option>';
+            } else {
+                borrowedBooks.forEach(book => {
+                    const option = document.createElement('option');
+                    option.value = book[1];
+                    option.text = book[1];
+                    returnSelect.appendChild(option);
+                });
+            }
+        }
+
+        function renderLatestBooks() {
+            const grid = document.getElementById('latest-books-grid');
+            grid.innerHTML = '';
+            const shuffled = [...booksData].sort(() => 0.5 - Math.random());
+            shuffled.slice(0, 5).forEach(book => {
+                const [id, title, author, status] = book;
+                const card = `
+                    <div class="flex flex-col gap-3 group">
+                        <div class="aspect-[3/4] bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl border border-slate-100 flex items-center justify-center p-6 group-hover:shadow-lg transition-all relative overflow-hidden">
+                            <i class="fas fa-book-open text-blue-200 text-5xl group-hover:scale-110 transition-transform"></i>
+                            <div class="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-xs truncate text-slate-700">${title}</h5>
+                            <p class="text-[10px] text-slate-400 truncate">${author}</p>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', card);
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('count-total').innerText = booksData.length;
+            document.getElementById('count-available').innerText = booksData.filter(b => b[3] === 'Tersedia').length;
+            document.getElementById('count-borrowed').innerText = booksData.filter(b => b[3] === 'Dipinjam').length;
+        }
+
+        function filterBooks() {
+            const query = document.getElementById('searchBook').value.toLowerCase();
+            const rows = document.querySelectorAll('#bookTableBody tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        // Handler Peminjaman
+        document.getElementById('loanForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const bookTitle = document.getElementById('bookSelect').value;
+            
+            if (!bookTitle) return;
+
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sedang Memproses...';
+            btn.disabled = true;
+
+            try {
+                await new Promise(res => setTimeout(res, 1000));
+                const bookIdx = booksData.findIndex(b => b[1] === bookTitle);
+                if(bookIdx !== -1) booksData[bookIdx][3] = "Dipinjam";
+                
+                showToast(`Sukses! ${bookTitle} berhasil dipinjam.`);
+                document.getElementById('loanForm').reset();
+                loadBooks();
+                setTimeout(() => switchTab('dashboard'), 2000);
+            } catch (error) {
+                showToast("Terjadi kesalahan.", "error");
+            } finally {
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Proses Peminjaman Buku';
+                btn.disabled = false;
+            }
+        };
+
+        // Handler Pengembalian
+        document.getElementById('returnForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('returnSubmitBtn');
+            const bookTitle = document.getElementById('returnBookSelect').value;
+
+            if (!bookTitle) return;
+
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sedang Memproses...';
+            btn.disabled = true;
+
+            try {
+                await new Promise(res => setTimeout(res, 1000));
+                const bookIdx = booksData.findIndex(b => b[1] === bookTitle);
+                if(bookIdx !== -1) {
+                    booksData[bookIdx][3] = "Tersedia";
+                }
+                
+                showToast(`Sukses! ${bookTitle} telah dikembalikan.`);
+                document.getElementById('returnForm').reset();
+                loadBooks();
+                setTimeout(() => switchTab('dashboard'), 2000);
+            } catch (error) {
+                showToast("Gagal memproses pengembalian.", "error");
+            } finally {
+                btn.innerHTML = '<i class="fas fa-history"></i> Proses Pengembalian Buku';
+                btn.disabled = false;
+            }
+        };
+
+        function showToast(msg, type = "success") {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            document.getElementById('toastMsg').innerText = msg;
+            if(type === "error") {
+                icon.classList.replace('bg-green-500', 'bg-red-500');
+                icon.innerHTML = '<i class="fas fa-times text-xs"></i>';
+            } else {
+                icon.classList.replace('bg-red-500', 'bg-green-500');
+                icon.innerHTML = '<i class="fas fa-check text-xs"></i>';
+            }
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 4000);
+        }
+
+        window.onload = loadBooks;
+    </script>
+</body>
+</html>
